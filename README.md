@@ -46,7 +46,7 @@ As the content of the project may increase, the demand of documentation will inc
 </br>
 </br>
 ![unit circle critical value](https://github.com/projektorius96/trigonom.js/blob/master/unit-circle-critical-values.jpg?raw=true)
-<h3><a style="background-color: black; color: white" href="https://projektorius96.github.io/trigonom.js/" target="_blank">Live preview</a></h3>
+<h3><a href="https://projektorius96.github.io/trigonom.js/">Live preview</a></h3>
 <!-- GETTING STARTED -->
 
 <!-- PREREQUISITES -->
