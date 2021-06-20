@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Konva Arrow Demo</title>
+    <style>
+      body, body > * {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        box-sizing: border-box;
+        background-color: #f0f0f0;
+      }
+
+      button {
+          display: inline-block;
+          position: absolute;
+          top: 40px;
+          right: 10px;
+          padding: 8px;
+          border-radius: 8px;
+      }
+    </style>
+    <script src="https://unpkg.com/konva@8.0.4/konva.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tweakpane@3.0.2/dist/tweakpane.min.js"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+    <button id="stop">Stop Anim</button>
+        <script>
+        document.getElementById("stop").addEventListener("click", (e)=>{
+        anim.stop(); alert("animation stopped");
+        e.currentTarget.style.backgroundColor = "red";
+        return;
+        })
+
+        /* Initial Tweakpane parameters : */
+
+        let pane = new Tweakpane.Pane();
+        let PARAMS = {
+        initDeg : 0, /* 0 degrees initially */
+        };
+        
+        /* KONVA.js settings : */
+
+        let width = window.innerWidth; console.log("window width: ", width);
+        let height = window.innerHeight; console.log("window heigth: ", height);
+        let r = 100; // radius (adjacent)
+
+        let stage = new Konva.Stage({
+        container: 'container',
+        width: width,
+        height: height,
+        });
+
+        let layer = new Konva.Layer();
+
+        let arrow = new Konva.Arrow({
+        x: stage.width() / 4,
+        y: stage.height() / 4,
+        points: [0, 0, r, 0],
+        pointerLength: 20,
+        pointerWidth: 20,
+        fill: 'black',
+        stroke: 'black',
+        strokeWidth: 4,
+        });
+        console.log("Arrow reference: ", arrow);
+
+        let node = new Konva.Node(arrow);
+        console.log("Arrow as node reference: ", node.__proto__);
+
+        /* Tweakpane cont'd : */
+        
+        pane.addInput(PARAMS, 'initDeg', {
+        min: 0,
+        max: 360,
+        step: 1,
+        }).on("change", (deg)=>{
+        /* arrow.rotation(deg.value) */ // ^Instead of this built-in Konva.Node method, we will use trig functions defined within Konva.Animation below : 
+        anim.start();
+        // reset button color if re-animated :
+        document.getElementById("stop").style.backgroundColor = "";
+        });
+
+        /* KONVA.js cont'd : */
+
+        // add the shape to the layer
+        layer.add(arrow);
+        console.log("Layer: ", layer);
+
+        // add the layer to the stage
+        stage.add(layer);
+        console.log("Stage: ", stage);
+
+        // ^update window.AnimationFrame to reflect Tweakpane.js changes onto Konva.js
+        let anim = new Konva.Animation(function (frame) {
+        // TIP: if trig functions taken outside of console.log(), the browser would get less hot :
+        console.log(arrow.attrs.points[2] = r * Math.cos(PARAMS.initDeg * Math.PI / 180));
+        console.log(arrow.attrs.points[3] = r * Math.sin(PARAMS.initDeg * Math.PI / 180));
+        console.log("Currently we at the amount of degrees: ", PARAMS.initDeg)
+        if(PARAMS.initDeg > 359) {
+            PARAMS.initDeg = 0; // when it reaches 360 angle it resets itself to init value
+            // also do not forget to update pane.containerElem_ to reflect changes in the pane :
+            document.querySelector("body div.tp-sldtxtv_t input").value = PARAMS.initDeg;
+            document.getElementsByClassName("tp-sldv_k")[0].style.width = `${PARAMS.initDeg}%`;
+        }
+        else {/* console.log(PARAMS.initDeg) */}
+        }, layer);
+    </script>
+  </body>
+</html>
